@@ -1,4 +1,3 @@
-import zainudinkontol lo pada
 import time, re
 import pickle, signal
 from config import *
@@ -187,7 +186,7 @@ class Anti_captcha:
         solver.set_soft_id(0)
         ret = solver.solve_and_return_solution()
         if ret != 0:
-            print("already solver")
+            #print("already solver")
             return ret
         else:
             exit(f"\n{solver.err_string}")
@@ -483,11 +482,11 @@ def run(token, api_key, coin, captcha, identifer, server, code, ua):
             except Kesalahan as e:
                 print(f'{ij}[{identifer}] {kn}{myUname} => {rd}{e}')
                 #open("result1.json","w").write(f"{identifer} {myUname} => {e} \n")
-                #response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nError : {e}")
+                response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nError : {e}")
                 sys.exit()
 
         except json.decoder.JSONDecodeError as babi:
-            print(babi)
+            #print(babi)
             print(f'akun {identifer} => Koneksi bermasalah !!!')
             print(f'akun {identifer} => mengulang dalam 10 detik')
             #sleep(10)
