@@ -1,4 +1,4 @@
-kontol lo pada
+import zainudinkontol lo pada
 import time, re
 import pickle, signal
 from config import *
