@@ -555,7 +555,7 @@ def verification_ip():
     hostname = socket.gethostname()
     IPAddr = socket.gethostbyname(hostname)
     req = requests.get("https://pastebin.com/raw/0NCUTVFu").json()
-    self.note = req["note"]
+    #self.note = req["note"]
     if IPAddr in req["meduk"]:
         return
     else:
