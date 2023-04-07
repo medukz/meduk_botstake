@@ -2,6 +2,7 @@ import time, re
 import pickle, signal
 from config import *
 import random
+import socket
 from pathlib import Path
 import traceback
 import requests
@@ -180,7 +181,7 @@ class Anti_captcha:
             """
         solver = hCaptchaProxyless()
         #solver.set_verbose(1)
-        solver.set_key("f5139f6c01918fdee549647ef7f36317")
+        solver.set_key(ANTI_CAPTCHA_KEY)
         solver.set_website_url('https://stake.kim/')
         solver.set_website_key('7830874c-13ad-4cfe-98d7-e8b019dc1742')
         solver.set_soft_id(0)
@@ -253,10 +254,10 @@ class CookieFile():
             return bh
 
 class Dropstake:
-    server1 = 'https://stake.best/_api/graphql'
+    server1 = f'https://{mirror}/_api/graphql'
     site_key = '7830874c-13ad-4cfe-98d7-e8b019dc1742'
-    server2 = "https://stake.best/_api/graphql"
-    host = 'https://stake.best/'
+    server2 = f"https://{mirror}/_api/graphql"
+    host = f'https://{mirror}/'
     r = httpx.Client()
     ret2 = r.request(
     "POST",
@@ -314,7 +315,7 @@ class Dropstake:
         while True:
             retries += 1
             try:
-                ret = self._r.post("https://stake.best/_api/graphql", json=data)
+                ret = self._r.post(f"https://{mirror}/_api/graphql", json=data)
                 badungbangpak = ret.json()
             except Exception as err:
                 if retries <= 3:
@@ -388,11 +389,11 @@ class Dropstake:
 
             if "errors" in ret.json():
                 if ret.json()["errors"][0]["errorType"] == "disabledSession":
-                    print("  [!!] Fail: Session disabled!")
+                    print("[!!] Fail: Session disabled!")
                 else:
                     print(
-                        f"  [!!] Fail: {ret.json()['errors'][0]['errorType']}\n"
-                        f"  **** {ret.json()['errors'][0]['message']}"
+                        f"[!!] Fail: {ret.json()['errors'][0]['errorType']}\n"
+                        f"**** {ret.json()['errors'][0]['message']}"
                     )
                 return
             else:
@@ -456,14 +457,13 @@ def run(token, api_key, coin, captcha, identifer, server, code, ua):
         return
     else:
         myId, myUname, myBalances, use2fa = accounts["me"]
-    #print(f'{biru}[{identifer}] {biru3}{myUname}{rs} => {ij}run') #,flush=True,end='\r')
     while True:
         try:
             print(f'{biru}[{identifer}] {biru3}{myUname}{rs} => {ij}run')
             try:
                 pay, clm = jk.ClaimDrop(code)
                 print(f'{ij}[{identifer}] {myUname} {kn}=> {ij}claim: {pay:8f} amo: {myBalances[coin] + pay:8f} {coin.upper()}')
-                #response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nClaimed: {pay:8f} {coin.upper()}\nCode : {code}")
+                response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nClaimed: {pay:8f} {coin.upper()}\nCode : {code}")
                 sys.exit()
             except CaptchaInvalid as e:
                 print(f'{ij}{myUname} => captcha failed\ntrying again')
@@ -482,14 +482,12 @@ def run(token, api_key, coin, captcha, identifer, server, code, ua):
             except Kesalahan as e:
                 print(f'{ij}[{identifer}] {kn}{myUname} => {rd}{e}')
                 #open("result1.json","w").write(f"{identifer} {myUname} => {e} \n")
-                response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nError : {e}")
+                response = requests.get("https://api.telegram.org/bot" + TOKEN + "/sendMessage" + "?chat_id=" + chat_id + "&text=" + f"Username : {myUname}\nBalance : {myBalances[coin]:.8f} {coin.upper()}\nError : {e}\nCode : {code}")
                 sys.exit()
 
-        except json.decoder.JSONDecodeError as babi:
-            #print(babi)
-            print(f'akun {identifer} => Koneksi bermasalah !!!')
-            print(f'akun {identifer} => mengulang dalam 10 detik')
-            #sleep(10)
+        except json.decoder.JSONDecodeError:
+            print(f'akun {myUname} => Koneksi bermasalah !!!')
+            print(f'akun {myUname} => mengulang dalam 10 detik')
             sys.exit()
 
         except KeyboardInterrupt:
@@ -552,7 +550,22 @@ def setting():
 
         elif pil == '6':
             return menu()
-
+        
+def verification_ip():
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    req = requests.get("https://pastebin.com/raw/0NCUTVFu").json()
+    self.note = req["note"]
+    if IPAddr in req["meduk"]:
+        return
+    else:
+        print()
+        print(IPAddr,"\n")
+        print(hostname)
+        print("Your Unlisted member of XYZ Team Project ! :")
+        time.sleep(2)
+        sys.exit()
+        
 def menu():
     os.system('cls' if sys.platform == 'win32' else 'clear')
     #print('[1] add akun')
@@ -583,7 +596,7 @@ def menu():
         print(f"""{war}
 {putih}author           : {hijau}Iqbalmedukzzz
 {putih}contact          : {hijau}Meduk @Eskowsharkbaby
-{putih}update           : {hijau}Versi 4.3
+{putih}update           : {hijau}Versi 4.3\n
 """)
         code = input('masukan code: ')
         #os.system('cls' if sys.platform == 'win32' else 'clear')
@@ -610,8 +623,7 @@ def menu():
                     return Main()
                 if False in [i.is_alive() for i in pp]:
                     sys.exit("close the account !!!")
-                    #pass
-                    #return Main()
+                    
             except KeyboardInterrupt:
                 for ii in pp:
                     if ii.is_alive():
@@ -703,6 +715,7 @@ def Main():
     anu = DB.load_data()
     if not anu['api Captcha']['api key']:
         setting()
+    verification_ip()
     menu()
 
 
